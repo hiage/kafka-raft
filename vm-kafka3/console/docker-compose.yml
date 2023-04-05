@@ -1,0 +1,20 @@
+version: "3.3"
+
+services:
+  kafka-console:
+    image: hiage/kafka-console:latest
+    container_name: kafka-console
+    hostname: kafka-console
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "kafka1: 192.168.144.47"
+      - "kafka2: 192.168.144.51"
+      - "kafka3: 192.168.144.49"
+    environment:
+      - KAFKA_BROKERS=kafka1:9092 
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    network_mode: host

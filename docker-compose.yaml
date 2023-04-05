@@ -1,0 +1,113 @@
+version: "3.8"
+volumes:
+      kafka-data1:
+      kafka-data2:
+      kafka-data3:
+
+networks:
+      kafka-net:
+        ipam:
+          config:
+            - subnet: 172.19.1.0/16
+services:
+  kafka1:
+      container_name: kafka1
+      hostname: kafka1
+      image: hiage/kafka:3.3.1
+      # build: 
+      #   context: .
+      ports:
+          - "9092:9092"
+      networks:
+        kafka-net:
+          ipv4_address: 172.19.1.11
+      volumes:
+      - ./config/kafka1/server.properties:/kafka/config/server.properties
+      - ./data/kafka1:/data/kafka
+      # - kafka-data1:/data/kafka/
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      healthcheck:
+          test: nc -z 127.0.0.1 9092 || exit -1
+          interval: 60s
+          retries: 5
+          start_period: 20s
+          timeout: 10s
+  kafka2:
+      container_name: kafka2
+      hostname: kafka2
+      image: hiage/kafka:3.3.1
+      # build: 
+      #   context: .
+      ports:
+          - "9292:9092"
+      networks:
+        kafka-net:
+          ipv4_address: 172.19.1.12
+      volumes:
+      - ./config/kafka2/server.properties:/kafka/config/server.properties
+      - ./data/kafka2:/data/kafka
+      # - kafka-data2:/data/kafka/
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      healthcheck:
+          test: nc -z 127.0.0.1 9092 || exit -1
+          interval: 60s
+          retries: 5
+          start_period: 20s
+          timeout: 10s
+  kafka3:
+      container_name: kafka3
+      hostname: kafka3
+      image: hiage/kafka:3.3.1
+      # build: 
+      #   context: .
+      ports:
+          - "9392:9092"
+      networks:
+        kafka-net:
+          ipv4_address: 172.19.1.13
+      volumes:
+      - ./config/kafka3/server.properties:/kafka/config/server.properties
+      - ./data/kafka3:/data/kafka
+      # - kafka-data3:/data/kafka
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      healthcheck:
+          test: nc -z 127.0.0.1 9092 || exit -1
+          interval: 60s
+          retries: 5
+          start_period: 20s
+          timeout: 10s
+
+  kafka-console:
+      image: hiage/kafka-console:latest
+      container_name: kafka-console
+      hostname: kafka-console
+      ports:
+        - "8080:8080"
+      extra_hosts:
+        - "kafka1: 172.19.1.11"
+        - "kafka2: 172.19.1.12"
+        - "kafka3: 172.19.1.13"
+      environment:
+        - KAFKA_BROKERS=kafka1:9092 
+      ulimits:
+        memlock:
+          soft: -1
+          hard: -1
+      networks:
+        kafka-net:
+          ipv4_address: 172.19.1.20
+      healthcheck:
+          test: nc -z 127.0.0.1 8080 || exit -1
+          interval: 60s
+          retries: 5
+          start_period: 20s
+          timeout: 10s
