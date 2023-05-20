@@ -18,7 +18,7 @@ services:
       volumes:
           - ./timezone:/etc/timezone
           - ./server.properties:/kafka/config/server.properties
-          - /data/kafka:/data/kafka/
+          - /data/kafka:/data/kafka
       ulimits:
         memlock:
           soft: -1
